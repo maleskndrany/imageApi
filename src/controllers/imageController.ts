@@ -4,7 +4,7 @@ import helpers from '../helpers/index'
 const resizeImage = async function (
   req: express.Request,
   res: express.Response
-) {
+): Promise<void> {
   const errors = helpers.validateRequest(req.query)
   if (errors.length) {
     res.status(400).send(errors.join(', '))

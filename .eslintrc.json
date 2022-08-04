@@ -1,7 +1,8 @@
 {
     "env": {
         "browser": true,
-        "es2021": true
+        "es2021": true,
+        "jasmine": true
     },
     "extends": [
         "standard"
@@ -14,5 +15,6 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "space-before-function-paren": [0]
     }
 }

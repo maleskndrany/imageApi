@@ -2,7 +2,7 @@ import path from 'path'
 import fs from 'fs'
 import sharp from 'sharp'
 
-// directory to check if exists
+// directories to check if exists
 const dir = 'src/images/thumb'
 const dirFull = 'src/images/full'
 
@@ -12,22 +12,32 @@ interface requestQuery {
   height?: number
 }
 
-const validateRequest = function (request: requestQuery) {
+const validateRequest = function (request: requestQuery): string[] {
   const errors: string[] = []
 
   // validate inputs
   if (!request.filename || request.filename === '') {
     errors.push('filename is required!')
   }
-  if (!request.width || request.width === 0) {
-    errors.push('width is required!')
-  }
-  if (!request.height || request.height === 0) {
-    errors.push('height is required!')
-  }
-
+  // check if file name exist
   if (!isFullImageExist(request)) {
     errors.push('The image you try to access is not existed!')
+  }
+  // check if width is number
+  if (Number.isNaN(parseInt(request.width + '' || ''))) {
+    errors.push('width must be a number!')
+  }
+  // check if height is number
+  if (Number.isNaN(parseInt(request.height + '' || ''))) {
+    errors.push('height must be a number!')
+  }
+  // check if width is exist and positive number
+  if (!request.width) {
+    errors.push('width is required and must be greater than zero!')
+  }
+  // check if height is exist and positive number
+  if (!request.height || request.height <= 0) {
+    errors.push('height is required and must be greater than zero!')
   }
 
   return errors
@@ -42,7 +52,7 @@ const isThumbDirExist = function (): boolean {
   }
 }
 
-const makeThumbDir = function () {
+const makeThumbDir = function (): void {
   fs.mkdirSync(dir)
 }
 
@@ -89,6 +99,10 @@ const createThumbImage = async function (
 ): Promise<string> {
   const srcPath: string = getFullImagePath(request)
   const targetPath: string = getThumbImagePath(request)
+
+  if (!isThumbDirExist()) {
+    makeThumbDir()
+  }
 
   await sharp(srcPath)
     .resize(Number(request.width), Number(request.height))
